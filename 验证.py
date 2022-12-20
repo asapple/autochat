@@ -1,4 +1,5 @@
 import hashlib
+import os
 # import datetime
 seral = input("input:请输入待注册机子的机器码：")
 # 获取当前时间
@@ -10,3 +11,4 @@ seral = input("input:请输入待注册机子的机器码：")
 # seral = seral + "Chenxuan" + str(year) + str(month)
 seral = seral + "Chenxuan" + "202212"
 print(hashlib.sha256(seral.encode('utf-8')).hexdigest())
+os.system('pause')

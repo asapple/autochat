@@ -13,7 +13,7 @@ import os
 import sys
 
 def send_m(win):
-    # 以下为“CTRL+V”组合键,回车发送，（方法一）
+    # 以下为“CTRL+V”组合键,回车发送
     win32api.keybd_event(17, 0, 0, 0)  # 有效，按下CTRL
     time.sleep(0.5)  # 需要延时
     win32gui.SendMessage(win, win32con.WM_KEYDOWN, 86, 0)  # V
@@ -74,12 +74,18 @@ def sendTaskLog():
         str = data.iloc[i,1]
 
         #将信息粘贴入剪切板
-        if str.startswith("pic:"):    #粘贴图片
+        if str.startswith("pic:"):    # 发送图片
             str = str[4:]
             setImage(str)
-        else:    #粘贴文字
+            send_m(win)
+        elif str.startswith("lin:"):    # 发送链接
+            str_list = str.split(':')
+            group_name = str_list[1]
+            win = get_window('CefWebViewWnd', '微信')
+            send_link(group_name)
+        else:    # 发送文字
             txt_ctrl_v(str)
-        send_m(win)
+            send_m(win)
         print("info:【%s】发送【%s】成功"%(actor,str))
 
 def yanzheng():
@@ -108,6 +114,17 @@ def yanzheng():
 
     seral= seral + "Chenxuan" + str(year) + str(month)
     key = hashlib.sha256(seral.encode('utf-8')).hexdigest()
+    
+    keyConf = ''
+    with open('config.txt', "r") as f:
+        text = f.read()
+        keyConf = text
+    if keyConf == key:
+        print("info:验证成功！")
+        return
+    else:
+        print("info:配置文件config.txt注册码无效！")
+
     inKey = input("input:请输入注册码：")
     if key!=inKey:
         print("info:验证失败！")
@@ -115,6 +132,42 @@ def yanzheng():
         exit(0)
     else:
         print("info:验证成功！")
+
+def send_link(group_name):
+    
+    screen_width = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
+    screen_height = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
+    
+    # 将鼠标移动到分享的按键位置,并点击鼠标
+    win32api.SetCursorPos((int(screen_width*0.9505),int(screen_height*0.0417)))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+    time.sleep(0.3)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+
+    time.sleep(1)
+
+    # 复制群名并粘贴进搜索框
+    pyperclip.copy(group_name)
+    win32api.keybd_event(17, 0, 0, 0)
+    win32api.keybd_event(86, 0, 0, 0)
+    time.sleep(0.3)
+    win32api.keybd_event(86, 0, win32con.KEYEVENTF_KEYUP, 0)
+    win32api.keybd_event(17, 0, win32con.KEYEVENTF_KEYUP, 0)
+
+    time.sleep(1)
+
+    #按下并释放回车键，选定群聊
+    win32api.keybd_event(0x0D, 0, 0, 0)
+    win32api.keybd_event(0x0D, 0, win32con.KEYEVENTF_KEYUP, 0)
+
+    time.sleep(1)
+
+    # 将鼠标移动到发送的按键位置，并点击发送
+    win32api.SetCursorPos((int(screen_width*0.5417),int(screen_height*0.6667)))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
+    time.sleep(0.3)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
+
 yanzheng()
 
 os.system('pause')
