@@ -167,7 +167,6 @@ def send_link(group_name):
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
     time.sleep(0.3)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
-
 yanzheng()
 
 os.system('pause')
@@ -175,11 +174,3 @@ print("info:程序开始执行；")
 sendTaskLog()
 print("info:程序执行结束；")
 os.system('pause')
-# scheduler = BlockingScheduler()
-# scheduler.add_job(sendTaskLog, 'interval', seconds=3)
-# scheduler.add_job(sendTaskLog, 'cron',day_of_week='mon-fri', hour=7,minute=31,second='10',misfire_grace_time=30)
-# scheduler.add_job(sendTaskLog, 'cron', day_of_week='mon-fri', hour=6, minute=55, second='10', misfire_grace_time=30)
-# try:
-# scheduler.start()
-# except (KeyboardInterrupt, SystemExit):
-    # pass
