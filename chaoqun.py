@@ -23,8 +23,7 @@ def conti():
     global running 
     running = 1
     print("继续键已按下，即将继续...")
-keyboard.add_hotkey('p', pause)
-keyboard.add_hotkey('c', conti)
+
 
 def send_m(win):
     # 以下为“CTRL+V”组合键,回车发送
@@ -80,6 +79,9 @@ def sendTaskLog():
     mul = 1
     str_mul = input("input:请输入程序执行速度倍数【请输入数字，例如：1.7】【推荐倍数：0.5（缓慢）、1（正常）、1.5（较快）、2（快速）】：")
     mul = float(str_mul) + 0.01
+
+    keyboard.add_hotkey('p', pause)
+    keyboard.add_hotkey('c', conti)
     for i in data.index.values:
         # 支持暂停
         while True:
@@ -98,13 +100,12 @@ def sendTaskLog():
         str = data.iloc[i,1]
 
         #将信息粘贴入剪切板
-        if str.startswith("pic:"):    # 发送图片
+        if str.startswith("/pic"):    # 发送图片
             str = str[4:]
             setImage(str)
             send_m(win)
-        elif str.startswith("lin:"):    # 发送链接
-            str_list = str.split(':')
-            group_name = str_list[1]
+        elif str.startswith("/link"):    # 发送链接
+            group_name = str[5:]
             win = get_window('CefWebViewWnd', '微信')
             send_link(group_name)
         else:    # 发送文字
@@ -131,7 +132,7 @@ def yanzheng():
     for board_id in c.Win32_BaseBoard():
         board_id=board_id.SerialNumber
         seral += board_id
-    print("info:注册码使用的硬件信息为：",seral,sep="")
+    print("info:本电脑的机器码：",seral,sep="")
 
     # 获取当前时间
     now = datetime.datetime.now()
