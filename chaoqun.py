@@ -11,6 +11,20 @@ import wmi
 import datetime
 import os
 import sys
+import keyboard
+import threading
+
+running = 1
+def pause():
+    global running 
+    running = 0
+    print("暂停键已按下，即将暂停（按c继续）...")
+def conti():
+    global running 
+    running = 1
+    print("继续键已按下，即将继续...")
+keyboard.add_hotkey('p', pause)
+keyboard.add_hotkey('c', conti)
 
 def send_m(win):
     # 以下为“CTRL+V”组合键,回车发送
@@ -63,11 +77,21 @@ def sendTaskLog():
     beginLen = 0
     if argc > 1:
         beginLen = int(sys.argv[1]) - 2
+    mul = 1
+    str_mul = input("input:请输入程序执行速度倍数【请输入数字，例如：1.7】【推荐倍数：0.5（缓慢）、1（正常）、1.5（较快）、2（快速）】：")
+    mul = float(str_mul) + 0.01
     for i in data.index.values:
+        # 支持暂停
+        while True:
+            if running:
+                break
+            else:
+                time.sleep(0.1)
+
         if i < beginLen:
             continue
         #消息之间的间隔时间
-        time.sleep(0.5+random.random()*8)
+        time.sleep(0.5+random.random()*8/mul)
         #获取发送窗口和发送信息
         actor = data.iloc[i,0]
         win = get_window('ChatWnd', '%s'%actor)
@@ -87,6 +111,9 @@ def sendTaskLog():
             txt_ctrl_v(str)
             send_m(win)
         print("info:【%s】发送【%s】成功"%(actor,str))
+    
+    print("info:程序执行结束；")
+    os.system('pause')
 
 def yanzheng():
     seral = ""
@@ -170,7 +197,5 @@ def send_link(group_name):
 yanzheng()
 
 os.system('pause')
-print("info:程序开始执行；")
-sendTaskLog()
-print("info:程序执行结束；")
-os.system('pause')
+thread = threading.Thread(target=sendTaskLog)
+thread.start()
