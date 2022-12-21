@@ -72,16 +72,14 @@ def sendTaskLog():
     filename = input("input:请输入范本文件名：")
     data = pd.read_excel(filename)
 
-    argc = len(sys.argv)
-    beginLen = 0
-    if argc > 1:
-        beginLen = int(sys.argv[1]) - 2
     mul = 1
     str_mul = input("input:请输入程序执行速度倍数【请输入数字，例如：1.7】【推荐倍数：0.5（缓慢）、1（正常）、1.5（较快）、2（快速）】：")
     mul = float(str_mul) + 0.01
 
     keyboard.add_hotkey('p', pause)
     keyboard.add_hotkey('c', conti)
+    print("配置完成，选定范本为【%s】,选定执行速率为【%s】"%(filename,str_mul))
+    os.system('pause')
     for i in data.index.values:
         # 支持暂停
         while True:
@@ -89,9 +87,6 @@ def sendTaskLog():
                 break
             else:
                 time.sleep(0.1)
-
-        if i < beginLen:
-            continue
         #消息之间的间隔时间
         time.sleep(0.5+random.random()*8/mul)
         #获取发送窗口和发送信息
@@ -196,7 +191,5 @@ def send_link(group_name):
     time.sleep(0.3)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 yanzheng()
-
-os.system('pause')
 thread = threading.Thread(target=sendTaskLog)
 thread.start()
